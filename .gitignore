@@ -1,0 +1,11 @@
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/schemas/
+*.log
+.shots/
+release/
+.DS_Store
+/tmp-vault*/
+fixtures/sample-vault/.amethyst/
+fixtures/sample-vault/.trash/

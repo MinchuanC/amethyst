@@ -1,0 +1,57 @@
+:root {
+  /* Ground and ink */
+  --void: #07060b;
+  --void-1: #0d0b14;
+  --void-2: #15121f;
+  --void-3: #1e1a2c;
+  --starlight: #eee9ff;
+  --dust: #a39cbc;
+  --dust-2: #8c85a7;
+
+  /* Accents, each with one meaning: violet = linked/active, magenta = tags, cyan = focus */
+  --nebula: #9d7bff;
+  --nebula-ink: #c6b4ff;
+  --flare: #f062f5;
+  --ion: #5eeaf7;
+  --danger: #ff6b8b;
+
+  /* Surfaces float over the live graph, so they are frosted rather than opaque. */
+  --surface: rgba(15, 12, 24, 0.74);
+  --surface-raised: rgba(24, 20, 37, 0.94);
+  --surface-blur: blur(28px) saturate(140%);
+  --hover: rgba(157, 123, 255, 0.09);
+  --active: rgba(157, 123, 255, 0.17);
+  --well: rgba(5, 4, 9, 0.5);
+
+  /* Type: one family for the interface, its mono sibling for code and graph readouts */
+  --font-ui: 'IBM Plex Sans Variable', -apple-system, system-ui, sans-serif;
+  --font-code: 'IBM Plex Mono', ui-monospace, monospace; /* taste-skill-ignore: code blocks and the graph readout only */
+
+  --size-sm: 12px;
+  --size-ui: 13.5px;
+  --size-body: 16px;
+  --measure: 740px;
+  --size-title: 30px;
+  --size-display: 88px;
+
+  /* Shape: panels 12, rows 6, controls fully round */
+  --r-panel: 12px;
+  --r-row: 6px;
+  --r-pill: 999px;
+  --gap: 10px;
+  --titlebar-h: 40px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 140ms;
+  --dur-med: 320ms;
+  --dur-slow: 620ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-med: 0ms;
+    --dur-slow: 0ms;
+  }
+}

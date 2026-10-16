@@ -1,0 +1,39 @@
+[package]
+name = "amethyst"
+version = "0.1.0"
+description = "Graph-first, Obsidian-compatible notes for macOS"
+edition = "2021"
+rust-version = "1.80"
+
+[lib]
+name = "amethyst_lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "amethyst"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+notify-debouncer-full = "0.5"
+pulldown-cmark = { version = "0.13", default-features = false }
+regex = "1"
+walkdir = "2"
+yaml-rust2 = "0.10"
+thiserror = "2"
+base64 = "0.22"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+strip = true

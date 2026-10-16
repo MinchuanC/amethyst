@@ -1,0 +1,140 @@
+.welcome {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--void);
+}
+
+.welcome-sky {
+  position: absolute;
+  inset: 0;
+}
+.welcome-sky canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.welcome-drag {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 40px;
+  z-index: 3;
+}
+
+.welcome-copy {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: clamp(32px, 7vw, 96px);
+  translate: 0 -50%;
+  width: min(460px, calc(100vw - 64px));
+  animation: rise-in var(--dur-slow) var(--ease-out);
+}
+
+.welcome-title {
+  margin: 0 0 16px;
+  font-size: var(--size-display);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: #faf8ff;
+}
+
+.welcome-lede {
+  margin: 0 0 28px;
+  max-width: 34ch;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #e3dcf5;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.button-large {
+  height: 44px;
+  padding: 0 22px;
+  font-size: 15px;
+}
+
+.welcome-error {
+  margin: 16px 0 0;
+  color: #ffb3c3;
+  font-size: var(--size-ui);
+}
+
+.welcome-recent {
+  margin-top: 40px;
+}
+.welcome-recent h2 {
+  margin: 0 0 6px;
+  font-size: var(--size-ui);
+  font-weight: 600;
+  color: var(--dust);
+}
+.welcome-recent ul {
+  list-style: none;
+  margin: 0 0 0 -12px;
+  padding: 0;
+}
+.welcome-recent li {
+  display: flex;
+  align-items: center;
+}
+.recent-item {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--r-row);
+  text-align: left;
+}
+.recent-item:hover {
+  background: var(--hover);
+}
+.recent-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--starlight);
+}
+.recent-path {
+  font-size: var(--size-sm);
+  color: var(--dust-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.recent-date {
+  font-size: var(--size-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--dust-2);
+}
+.recent-remove {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-pill);
+  color: var(--dust-2);
+  opacity: 0;
+}
+.welcome-recent li:hover .recent-remove,
+.recent-remove:focus-visible {
+  opacity: 1;
+}
+.recent-remove:hover {
+  color: var(--starlight);
+  background: var(--hover);
+}
+
+.welcome-foot {
+  margin: 36px 0 0;
+  font-size: var(--size-ui);
+  color: var(--dust);
+}
