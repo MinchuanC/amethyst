@@ -1,7 +1,5 @@
 # Amethyst
 
-A more flashy version of Obsidian.
-
 Amethyst is a graph-first, Obsidian-compatible notes app for macOS. It keeps the familiar local-first note-taking workflow of Obsidian, while reimagining the experience around a live knowledge graph that feels more like a desktop operating environment than a document editor.
 
 Built with Tauri, React, TypeScript, and Rust, Amethyst is designed to work entirely on-device: no AI backend, no telemetry, and no cloud sync required.
