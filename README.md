@@ -1,231 +1,178 @@
 # Amethyst
 
-Amethyst is a graph-first, Obsidian-compatible notes app for macOS. It keeps the familiar local-first note-taking workflow of Obsidian, while reimagining the experience around a live knowledge graph that feels more like a desktop operating environment than a document editor.
+**A knowledge graph you can work inside.**
 
-Built with Tauri, React, TypeScript, and Rust, Amethyst is designed to work entirely on-device: no AI backend, no telemetry, and no cloud sync required.
+A graph-first, local-first Markdown notes app for macOS.
+
+[Website & Interactive Demo](https://amethyst-mauve.vercel.app/) · [GitHub Issues](https://github.com/MinchuanC/amethyst/issues)
+
+Amethyst reimagines personal knowledge management around the connections between your notes. Instead of treating the graph as a small visualization beside a document editor, it makes the graph the environment you navigate: explore linked ideas in 3D, open notes in floating panels, and move between writing and graph exploration.
+
+Amethyst is designed to work with existing **Obsidian-style Markdown vaults**. Your notes remain ordinary local files; there is no required cloud account or AI service.
+
+> **Status: Early development.** Amethyst is not yet a full replacement for Obsidian. Compatibility with Obsidian plugins and every Obsidian feature is not guaranteed.
 
 ## Why Amethyst?
 
-Most note apps are built around folders and documents. Amethyst starts from the graph:
+Most note-taking apps make you navigate a hierarchy of files and open documents one at a time. Amethyst starts with the relationships between those documents.
 
-- Notes are connected by links and backlinks
-- The graph stays visible as the primary interface
-- Notes open in floating glass panels above the graph
-- Vaults work with existing Obsidian files without conversion
-- The app remains local and private by default
+- **Graph-first navigation** — explore the structure of your vault instead of treating the graph as a secondary view.
+- **A spatial writing environment** — open notes in floating, glass-like panels above the graph.
+- **Your existing files** — open a Markdown vault without converting it to a proprietary format.
+- **Local by design** — core functionality runs on your Mac; no cloud account, AI backend, telemetry, or sync service is required.
+- **Built for exploration** — discover hubs, clusters, and paths between ideas.
 
-## Highlights
+## Features
 
-- Obsidian-compatible vault support
-- Graph-first note navigation
-- 3D graph view with a 2D mode toggle
-- Markdown editing with CodeMirror
-- Wikilink parsing for standard Obsidian patterns
-- Backlinks, outgoing links, and note metadata
-- Native local file parsing and indexing in Rust
-- Fast development loop with a Vite + React frontend
-- Tauri desktop app with a fully local backend
+The current project focuses on:
 
-## Stack
+- Opening and indexing local Markdown vaults
+- Parsing common Obsidian-style wikilinks, aliases, heading links, embeds, tags, and frontmatter metadata
+- Resolving note links and tracking backlinks and outgoing links
+- Interactive 3D knowledge graph with a 2D viewing mode
+- Markdown editing powered by CodeMirror 6
+- Floating note panels and a graph-centered desktop layout
+- Local file watching and indexing through a Rust backend
+- Vault operations constrained to the selected vault directory
 
-- Frontend: React, TypeScript, Vite
-- Desktop shell: Tauri 2
-- Backend: Rust
-- Graph rendering: Three.js, graphology, WebGL
-- Editor: CodeMirror 6
-- Styling: CSS with glassmorphism-inspired UI tokens
+Amethyst is under active development. Some advanced graph analysis, navigation, and editing ideas remain in progress. See the roadmap for the intended direction.
 
-## Project status
+## See it in action
 
-This project is under active development and is intended as a polished local-first knowledge graph app for personal note-taking and exploration.
+Visit the [Amethyst website](https://amethyst-mauve.vercel.app/) for the current product presentation and interactive demo.
 
-## Features in scope
+The experience is best demonstrated by opening a vault, navigating the graph, opening a note, and following a link to another idea.
 
-### Core experience
-- Open an existing Obsidian vault as-is
-- Scan markdown files, links, tags, headings, and frontmatter
-- Resolve note references using Obsidian-like rules
-- Render a living graph from vault relationships
-- Open notes in layered, floating note panels
-- Support graph mode and writing mode with keyboard-driven workflows
+## Compatibility and data
 
-### Graph engine direction
-- 3D graph view by default
-- 2D mode for a more conventional spatial layout
-- Clustering and graph analysis
-- Focused note navigation and path tracing
-- Lightweight, animated node and link rendering
-- Optional time-lapse view over note evolution
+Amethyst is built around local Markdown files and common Obsidian-style conventions.
 
-### Editing and vault intelligence
-- Markdown editing with live previews
-- Autocomplete for wikilinks and tags
-- Search, backlinks, and related note discovery
-- Metadata-driven note organization
-- Local, vault-root constrained file operations
+- Existing Markdown notes are the source of truth.
+- Amethyst stores its own state in a `.amethyst/` directory inside the selected vault.
+- It does not write its own configuration into Obsidian's `.obsidian/` directory.
+- Obsidian plugins and complete feature parity are **not** currently promised.
+- Back up your vault before testing an early build on important notes.
 
-## Architecture
+## Technology
 
-Amethyst intentionally separates the system into a Rust-first indexing layer and a browser-like frontend UI.
+| Layer | Technology |
+| --- | --- |
+| Desktop shell | Tauri 2 |
+| Backend | Rust |
+| Frontend | React, TypeScript, Vite |
+| Graph rendering | Three.js, WebGL |
+| Graph model and analysis | graphology |
+| Graph layout | d3-force-3d |
+| Markdown editor | CodeMirror 6 |
+| State management | Zustand |
 
-- Rust handles vault scanning, parsing, indexing, and file watching
-- The frontend mirrors the graph state and renders the user experience
-- Tauri exposes the backend as commands for the UI layer
-- Graph analysis and layout logic run in the frontend for responsiveness
+### Architecture
 
-## Repository structure
+Amethyst separates vault indexing from the interface.
 
-```text
-amethyst/
-├── docs/
-│   └── design.md
-├── fixtures/
-│   └── sample-vault/
-├── scripts/
-│   └── gen-vault.ts
-├── src/
-│   ├── api/
-│   ├── editor/
-│   ├── graph/
-│   ├── state/
-│   ├── styles/
-│   ├── ui/
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── ...
-├── src-tauri/
-│   ├── src/
-│   ├── tests/
-│   ├── Cargo.toml
-│   ├── build.rs
-│   └── tauri.conf.json
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-├── .gitignore
-└── README.md
-```
+1. **Rust** scans and parses the vault, resolves links, indexes notes, and watches for file changes.
+2. **Tauri** exposes vault data and file operations to the frontend.
+3. **The frontend** maintains a graph model and renders the interactive experience.
+4. **The graph engine** handles rendering, camera movement, layout, and visual effects.
 
-## Getting started
+This separation keeps file operations and link resolution independent of the visual interface.
 
-### Prerequisites
+## Run locally
 
+Amethyst is currently set up for development from source. Check the [Releases](https://github.com/MinchuanC/amethyst/releases) page for any available prebuilt installers.
+
+### Requirements
+
+- macOS
 - Node.js and npm
 - Rust toolchain
-- Tauri dependencies for macOS
-- Xcode Command Line Tools on macOS
+- Xcode Command Line Tools
+- Any additional Tauri prerequisites required by your system
 
-### Install
+### Setup
 
 ```bash
 git clone https://github.com/MinchuanC/amethyst.git
 cd amethyst
 npm install
-```
-
-### Run the app in development mode
-
-```bash
 npm run app:dev
 ```
 
-### Run the web frontend only
+To run only the frontend in a browser:
 
 ```bash
 npm run dev
 ```
 
-### Build the app
+The browser frontend uses the development/mock API where configured. Native vault access and file operations are intended to run through the Tauri application.
+
+### Build and checks
 
 ```bash
 npm run app:build
-```
-
-### Run tests
-
-```bash
 npm test
-```
-
-### Typecheck
-
-```bash
 npm run typecheck
 ```
 
-## Useful scripts
+## Scripts
 
-| Script | Purpose |
+| Command | Purpose |
 | --- | --- |
 | `npm run dev` | Start the Vite frontend |
-| `npm run build` | Build the frontend bundle |
-| `npm run app:dev` | Run the Tauri desktop app in dev mode |
-| `npm run app:build` | Produce a Tauri desktop build |
-| `npm test` | Run the project test suite |
-| `npm run typecheck` | TypeScript validation |
-| `npm run gen-vault` | Generate a sample vault for testing and demos |
-| `npm run icons` | Regenerate app icons |
-
-## Design direction
-
-The project is intentionally opinionated:
-
-- The graph is the main desktop surface
-- Notes float above it in glass-like panels
-- Visuals lean into a dark, nebula-inspired palette
-- The app is designed to feel atmospheric but readable
-- Local-first and privacy-preserving by default
-
-The repository includes a design document at `docs/design.md` that captures architecture and product direction in more detail.
+| `npm run build` | Type-check and build the frontend |
+| `npm run app:dev` | Run the Tauri desktop app in development |
+| `npm run app:build` | Build the desktop app |
+| `npm test` | Run the test suite |
+| `npm run typecheck` | Run TypeScript validation |
+| `npm run gen-vault` | Generate a synthetic vault for development and performance testing |
+| `npm run icons` | Regenerate application icons |
 
 ## Roadmap
 
-### Phase 1: Foundation
-- Vault scanning and indexing
-- Obsidian-compatible file parsing
-- Note editing and file operations
-- Search and backlinks
+The project is evolving toward a more expressive way to navigate and understand personal knowledge.
 
-### Phase 2: Graph engine
-- 3D graph rendering
-- Focus navigation
-- Graph mode and write mode transitions
-- Layout tuning and performance optimization
+### Graph exploration
+- Focused navigation and neighborhood highlighting
+- Paths between notes
+- More flexible graph layouts and visual interactions
 
-### Phase 3: Signature features
-- Clustering and pathfinding
-- Time-lapse views
-- Radar and metadata summaries
-- Rich graph interactions
+### Graph intelligence
+- Automatic clustering and hub metrics
+- Better discovery of relationships across a vault
+- A vault overview highlighting orphan notes and broken links
 
-### Phase 4: Polish
-- Command palette and quick navigation
-- Live preview and refined editing experience
-- Packaging, performance improvement, and release polish
+### Knowledge over time
+- Time-lapse exploration of how a vault grows
+- Visual representations of how notes and connections evolve
+
+### Writing and workflow
+- Improved link and tag autocomplete
+- Search and quick navigation
+- More refined Markdown editing and reading experiences
+
+### Release polish
+- Performance optimization
+- Accessibility and reduced-motion support
+- Packaging, installation, and onboarding improvements
+
+Roadmap items describe intended direction, not a guarantee that every feature is available in the current build.
 
 ## Contributing
 
-Contributions are welcome. The project is built around modular components and a design-first workflow, so if you are interested in the app architecture, UI, graph systems, parsing, or vault tooling, there is a lot of ground to contribute.
+Issues, bug reports, and thoughtful feedback are welcome.
 
-Before opening a PR, it is recommended to:
+1. Check [existing issues](https://github.com/MinchuanC/amethyst/issues) before opening a duplicate.
+2. Include reproduction steps and your macOS version when reporting a bug.
+3. For larger changes, open an issue first to discuss the design.
+4. Keep contributions aligned with Amethyst's graph-first, local-first direction.
 
-1. Review the project design notes in `docs/design.md`
-2. Run the test suite locally
-3. Keep changes aligned with the app's graph-first philosophy
+Useful starting points:
 
-## Notes
-
-- The project is designed to work with existing Obsidian folders without forcing a migration process
-- It is intentionally local-first and does not rely on cloud services for core functionality
-- The repository includes a sample vault for development and testing
-
-## Repository
-
-- GitHub: https://github.com/MinchuanC/amethyst
-- Description: A more flashy version of Obsidian
+- `src/` — frontend, UI, state, editor, and graph engine
+- `src-tauri/` — Rust backend and vault operations
+- `fixtures/sample-vault/` — sample vault for development and tests
+- `docs/design.md` — architecture and design direction
 
 ## License
 
-License information has not been specified in the repository metadata at this time.
-
+A license has not yet been specified. Until a license is added to the repository, do not assume the code is licensed for reuse, redistribution, or modification.
