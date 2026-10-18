@@ -172,7 +172,3 @@ Useful starting points:
 - `src-tauri/` — Rust backend and vault operations
 - `fixtures/sample-vault/` — sample vault for development and tests
 - `docs/design.md` — architecture and design direction
-
-## License
-
-A license has not yet been specified. Until a license is added to the repository, do not assume the code is licensed for reuse, redistribution, or modification.
