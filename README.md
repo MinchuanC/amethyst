@@ -4,6 +4,8 @@
 
 A graph-first, local-first Markdown notes app for macOS.
 
+This repository is graph-first Markdown notes for macOS and Obsidian-style vaults. It is not [ianyh/Amethyst](https://github.com/ianyh/amethyst) (the tiling window manager), not the [Amethyst RSS reader](https://amethyst.news/), and not the [Hugo Amethyst theme](https://github.com/64bitpandas/amethyst).
+
 [Website & Interactive Demo](https://amethyst-mauve.vercel.app/) · [GitHub Issues](https://github.com/MinchuanC/amethyst/issues)
 
 Amethyst reimagines personal knowledge management around the connections between your notes. Instead of treating the graph as a small visualization beside a document editor, it makes the graph the environment you navigate: explore linked ideas in 3D, open notes in floating panels, and move between writing and graph exploration.
@@ -172,3 +174,7 @@ Useful starting points:
 - `src-tauri/` — Rust backend and vault operations
 - `fixtures/sample-vault/` — sample vault for development and tests
 - `docs/design.md` — architecture and design direction
+
+## License
+
+Personal use only, under Minchuan's terms. All rights reserved. No open-source rights are granted. See [LICENSE](LICENSE).

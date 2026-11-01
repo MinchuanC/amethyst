@@ -2,6 +2,7 @@
 name = "amethyst"
 version = "0.1.0"
 description = "Graph-first, Obsidian-compatible notes for macOS"
+license = "LicenseRef-Personal-Use-Only"
 edition = "2021"
 rust-version = "1.80"
 
