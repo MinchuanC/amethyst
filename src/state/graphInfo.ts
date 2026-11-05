@@ -15,7 +15,6 @@ interface GraphInfoStore {
   /** CSS color per node id for the current color mode. */
   colors: Map<string, string>;
   fps: number;
-  settled: boolean;
   timelapseT: number;
   timelapsePlaying: boolean;
   set(partial: Partial<Omit<GraphInfoStore, 'set'>>): void;
@@ -26,7 +25,6 @@ export const useGraphInfo = create<GraphInfoStore>((set) => ({
   clusterList: [],
   colors: new Map(),
   fps: 0,
-  settled: false,
   timelapseT: 1,
   timelapsePlaying: false,
   set: (partial) => set(partial),

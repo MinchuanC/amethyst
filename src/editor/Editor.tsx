@@ -18,7 +18,7 @@ import { useEditorStats } from '../state/editorStats';
 import { rectOf, usePreview } from '../state/preview';
 import { vaultCompletions } from './completion';
 import { formattingKeymap } from './formatting';
-import { flushEditor, registerFlush, takeRename } from './bridge';
+import { registerFlush, takeRename } from './bridge';
 import { frontmatter } from './frontmatter';
 import { livePreview, markdownLinkAt } from './livePreview';
 import { amethystEditorTheme } from './theme';
@@ -34,8 +34,6 @@ const removedPaths = new Set<string>();
 
 /** Writes run one after another so an older save can never land last. */
 let writeQueue: Promise<void> = Promise.resolve();
-
-export { flushEditor };
 
 function stamp() {
   const d = new Date();
@@ -133,7 +131,6 @@ export function Editor({ path }: { path: string }) {
       Prec.highest(
         keymap.of([
           { key: 'Mod-g', run: () => (runCommand('mode.toggle'), true) },
-          { key: 'Mod-Shift-g', run: () => true },
           { key: 'Mod-e', run: () => (runCommand('note.reading'), true) },
           { key: 'Mod-[', run: () => (runCommand('nav.back'), true) },
           { key: 'Mod-]', run: () => (runCommand('nav.forward'), true) },
@@ -381,8 +378,4 @@ export function Editor({ path }: { path: string }) {
   );
 
   return <div className="editor-host" ref={hostRef} />;
-}
-
-export function forgetEditorState(path: string) {
-  stateCache.delete(path);
 }

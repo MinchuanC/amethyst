@@ -14,10 +14,9 @@ function reset() {
     overlay: null,
     hud: { radar: false, path: false, timelapse: false },
     focusId: null,
-    selectedId: null,
     highlight: null,
     path: { from: null, to: null, result: null, searched: false },
-    timelapse: { playing: false, t: 1, speed: 1 },
+    timelapse: { speed: 1 },
     pendingLine: null,
     searchQuery: '',
     toasts: [],
@@ -118,12 +117,12 @@ describe('workspace modes and HUD', () => {
     expect(useWorkspace.getState().path).toEqual({ from: null, to: null, result: null, searched: false });
   });
 
-  it('rewinds the time-lapse when it is opened', () => {
+  it('opens the time-lapse HUD and keeps playback speed', () => {
     const ws = useWorkspace.getState();
+    ws.setTimelapse({ speed: 4 });
     ws.toggleHud('timelapse', true);
     expect(useWorkspace.getState().hud.timelapse).toBe(true);
-    expect(useWorkspace.getState().timelapse.playing).toBe(true);
-    expect(useWorkspace.getState().timelapse.t).toBe(0);
+    expect(useWorkspace.getState().timelapse.speed).toBe(4);
   });
 
   it('rewrites open tabs and history after a rename, and drops deleted paths', () => {

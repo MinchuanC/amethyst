@@ -34,7 +34,7 @@ interface VaultStore {
   graphVersion: number;
   /** Bumps only when nodes or links are added or removed, not on edits. */
   structureVersion: number;
-  lastChange: { summary: DeltaSummary; origin: VaultChange['origin']; at: number } | null;
+  lastChange: DeltaSummary | null;
   ghostLinks: GhostLink[];
   init(): Promise<void>;
   open(path: string): Promise<void>;
@@ -146,7 +146,7 @@ function applyChange(change: VaultChange) {
     useVault.setState({
       graphVersion: store.graphVersion + 1,
       structureVersion: store.structureVersion + (structural ? 1 : 0),
-      lastChange: { summary, origin: change.origin, at: performance.now() },
+      lastChange: summary,
     });
   }
   if (change.added.length || change.removed.length || change.foldersChanged) {

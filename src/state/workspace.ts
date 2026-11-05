@@ -40,8 +40,6 @@ interface PathState {
 }
 
 interface TimelapseState {
-  playing: boolean;
-  t: number;
   speed: number;
 }
 
@@ -56,7 +54,6 @@ interface WorkspaceStore {
   overlay: Overlay | null;
   hud: { radar: boolean; path: boolean; timelapse: boolean };
   focusId: string | null;
-  selectedId: string | null;
   highlight: { ids: string[]; label: string } | null;
   path: PathState;
   timelapse: TimelapseState;
@@ -70,7 +67,7 @@ interface WorkspaceStore {
 
   load(): Promise<void>;
   persistNow(): Promise<void>;
-  openNote(path: string, opts?: { newTab?: boolean; line?: number; keepMode?: boolean; fromHistory?: boolean }): void;
+  openNote(path: string, opts?: { newTab?: boolean; line?: number; fromHistory?: boolean }): void;
   back(): void;
   forward(): void;
   setTitleFocus(path: string | null): void;
@@ -87,7 +84,6 @@ interface WorkspaceStore {
   setOverlay(o: Overlay | null): void;
   toggleHud(key: keyof WorkspaceStore['hud'], value?: boolean): void;
   setFocus(id: string | null): void;
-  select(id: string | null): void;
   setHighlight(h: WorkspaceStore['highlight']): void;
   setPath(p: Partial<PathState>): void;
   setTimelapse(t: Partial<TimelapseState>): void;
@@ -120,10 +116,9 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
     overlay: null,
     hud: { radar: false, path: false, timelapse: false },
     focusId: null,
-    selectedId: null,
     highlight: null,
     path: { from: null, to: null, result: null, searched: false },
-    timelapse: { playing: false, t: 1, speed: 1 },
+    timelapse: { speed: 1 },
     pendingLine: null,
     searchQuery: '',
     toasts: [],
@@ -148,12 +143,11 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
         rightOpen: stored.rightOpen ?? true,
         viewModes: stored.viewModes ?? {},
         focusId: stored.active ?? null,
-        selectedId: null,
         highlight: null,
         overlay: null,
         path: { from: null, to: null, result: null, searched: false },
         hud: { radar: false, path: false, timelapse: false },
-        timelapse: { playing: false, t: 1, speed: 1 },
+        timelapse: { speed: 1 },
         history: stored.active ? [stored.active] : [],
         historyIndex: stored.active ? 0 : -1,
         titleFocus: null,
@@ -186,11 +180,10 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
         tabs: next,
         active: path,
         focusId: path,
-        selectedId: path,
         history: nextHistory,
         historyIndex: nextIndex,
         pendingLine: opts.line != null ? { path, line: opts.line } : null,
-        ...(opts.keepMode ? {} : { mode: 'write' as Mode }),
+        mode: 'write',
       });
       persist();
     },
@@ -237,7 +230,7 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
     },
 
     setActive(path) {
-      set({ active: path, focusId: path, selectedId: path });
+      set({ active: path, focusId: path });
       persist();
     },
 
@@ -279,9 +272,6 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
     toggleHud(key, value) {
       const hud = { ...get().hud, [key]: value ?? !get().hud[key] };
       set({ hud });
-      if (key === 'timelapse') {
-        set({ timelapse: { ...get().timelapse, playing: hud.timelapse, t: hud.timelapse ? 0 : 1 } });
-      }
       if (key === 'path' && !hud.path) {
         set({ path: { from: null, to: null, result: null, searched: false } });
       }
@@ -289,10 +279,6 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
 
     setFocus(focusId) {
       set({ focusId });
-    },
-
-    select(selectedId) {
-      set({ selectedId });
     },
 
     setHighlight(highlight) {
@@ -317,14 +303,13 @@ export const useWorkspace = create<WorkspaceStore>((set, get) => {
 
     renamePaths(map) {
       const rename = (p: string | null) => (p && map[p] ? map[p] : p);
-      const { tabs, active, focusId, selectedId, viewModes, history } = get();
+      const { tabs, active, focusId, viewModes, history } = get();
       const nextModes: Record<string, ViewMode> = {};
       for (const [k, v] of Object.entries(viewModes)) nextModes[rename(k)!] = v;
       set({
         tabs: tabs.map((t) => rename(t)!),
         active: rename(active),
         focusId: rename(focusId),
-        selectedId: rename(selectedId),
         viewModes: nextModes,
         history: history.map((h) => rename(h)!),
       });
