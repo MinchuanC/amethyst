@@ -9,7 +9,6 @@ import { graphModel, useVault } from '../state/vault';
 import { useWorkspace } from '../state/workspace';
 import { play } from '../ui/sounds';
 import { GraphEngine } from './engine/GraphEngine';
-import type { Dims } from './layoutProtocol';
 import { buildView } from './model';
 
 function webglAvailable() {
@@ -67,10 +66,7 @@ export function GraphView() {
       engine.on('select', (id, mods) => {
         const w = ws();
         if (!id) {
-          if (!w.hud.path) {
-            w.select(null);
-            w.setFocus(null);
-          }
+          if (!w.hud.path) w.setFocus(null);
           return;
         }
         play('select');
@@ -81,7 +77,6 @@ export function GraphView() {
           else w.setPath({ to: id });
           return;
         }
-        w.select(id);
         w.setFocus(id);
         if (mods.meta) openNode(id, true);
       }),
@@ -102,7 +97,6 @@ export function GraphView() {
         const key = dims === 3 ? '3d' : '2d';
         cacheRef.current = { ...cacheRef.current, version: 1, [key]: Object.fromEntries(positions) };
         api.writeAppFile('layout', JSON.stringify(cacheRef.current)).catch(() => {});
-        useGraphInfo.getState().set({ settled: true });
       }),
     );
 
@@ -118,7 +112,7 @@ export function GraphView() {
       const st = s();
       const view = buildView(graphModel, st, useVault.getState().ghostLinks);
       const last = useVault.getState().lastChange;
-      const pulse = animate && last ? [...last.summary.changedNodes, ...last.summary.addedNodes] : [];
+      const pulse = animate && last ? [...last.changedNodes, ...last.addedNodes] : [];
       let cached: Map<string, number[]> | undefined;
       if (!loadedRef.current) {
         const key = st.dimension === '2d' ? '2d' : '3d';
@@ -201,5 +195,3 @@ export function GraphView() {
 
   return <div className="graph-layer" ref={hostRef} />;
 }
-
-export type { Dims };

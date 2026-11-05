@@ -411,19 +411,6 @@ export class GraphEngine {
     }
   }
 
-  /** The vault's date range, for the time-lapse readout. */
-  timeRange(): [number, number] {
-    let min = Infinity;
-    let max = -Infinity;
-    for (const node of this.nodes) {
-      if (node.created > 0) {
-        min = Math.min(min, node.created);
-        max = Math.max(max, node.created);
-      }
-    }
-    return Number.isFinite(min) ? [min, max] : [0, 0];
-  }
-
   private recolor() {
     this.colorCtx = buildColorContext(this.nodes, this.colorMode, this.clusters);
     const css = new Map<string, string>();

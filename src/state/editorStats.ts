@@ -3,7 +3,6 @@ import { create } from 'zustand';
 interface EditorStatsStore {
   path: string | null;
   words: number;
-  characters: number;
   set(path: string, text: string): void;
 }
 
@@ -19,6 +18,5 @@ export function countWords(text: string) {
 export const useEditorStats = create<EditorStatsStore>((set) => ({
   path: null,
   words: 0,
-  characters: 0,
-  set: (path, text) => set({ path, ...countWords(text) }),
+  set: (path, text) => set({ path, words: countWords(text).words }),
 }));

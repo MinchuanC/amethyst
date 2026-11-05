@@ -155,7 +155,7 @@ export async function followLink(target: string, from: string, newTab = false) {
     const resolved = await api.resolveLink(target, from);
     if (resolved) {
       if (/\.md$/i.test(resolved)) ws().openNote(resolved, { newTab });
-      else revealOrPreview(resolved);
+      else ws().openNote(resolved);
       return;
     }
     const path = await api.createNote(target, '');
@@ -164,11 +164,6 @@ export async function followLink(target: string, from: string, newTab = false) {
   } catch (e) {
     report(e);
   }
-}
-
-/** Attachments open in a viewer tab of their own. */
-function revealOrPreview(path: string) {
-  ws().openNote(path);
 }
 
 /** Opens a graph node: notes open in the editor, ghosts get created. */
@@ -191,7 +186,7 @@ export async function openNode(id: string, newTab = false) {
     return;
   }
   if (/\.md$/i.test(id)) ws().openNote(id, { newTab });
-  else revealOrPreview(id);
+  else ws().openNote(id);
 }
 
 export function noteFolder(path: string | null) {
