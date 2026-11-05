@@ -1,9 +1,8 @@
 import { api } from '../api';
 import { useVault } from '../state/vault';
 import { collectTargets, renderMarkdown, splitFrontmatter, type Frontmatter } from './markdown';
-import { linkTarget } from './wikilinks';
+import { IMAGE_RE, linkTarget } from './wikilinks';
 
-const IMAGE_RE = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
 const EMBED_RE = /!\[\[([^[\]\n]+?)\]\]/g;
 
 /** Resolves a link target from the cached link targets, without a round trip. */

@@ -3,12 +3,12 @@ import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'r
 import { followLink, openNode } from '../actions';
 import { api } from '../api';
 import { renderNote } from '../editor/noteHtml';
+import { IMAGE_RE } from '../editor/wikilinks';
 import { usePreview } from '../state/preview';
 import { folderOf, titleOf } from './primitives';
 
 const WIDTH = 460;
 const MAX_HEIGHT = 380;
-const IMAGE_RE = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
 
 /** Obsidian-style page preview: hover a link to read the note without leaving this one. */
 export function LinkPreview() {

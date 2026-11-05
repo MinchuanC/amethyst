@@ -10,9 +10,7 @@ import {
   type ViewUpdate,
 } from '@codemirror/view';
 import { renderBlockHtml } from './markdown';
-import { inCode, linkTarget, WIKILINK_RE } from './wikilinks';
-
-const IMAGE_RE = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
+import { frontmatterEnd, IMAGE_RE, inCode, linkTarget, WIKILINK_RE } from './wikilinks';
 
 class BulletWidget extends WidgetType {
   eq() {
@@ -100,16 +98,6 @@ function activeLines(state: EditorState, focused: boolean) {
     for (let i = a; i <= b; i++) set.add(i);
   }
   return set;
-}
-
-export function frontmatterEnd(state: EditorState) {
-  const doc = state.doc;
-  if (doc.lines < 2 || doc.line(1).text !== '---') return 0;
-  for (let i = 2; i <= Math.min(doc.lines, 200); i++) {
-    const text = doc.line(i).text;
-    if (text === '---' || text === '...') return doc.line(i).to;
-  }
-  return 0;
 }
 
 interface Pending {
