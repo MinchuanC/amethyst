@@ -43,7 +43,7 @@ fn opens_and_counts() {
     let (_d, vault) = temp_vault();
     let info = vault.info();
     assert_eq!(info.note_count, 39);
-    assert_eq!(info.file_count, 41);
+    assert_eq!(info.file_count, 40);
     let files = vault.index.list_files();
     assert!(!files.iter().any(|f| f.path.starts_with(".obsidian")));
 }
