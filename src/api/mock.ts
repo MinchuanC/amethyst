@@ -379,6 +379,11 @@ export function createMockBackend(): Backend {
     revealInFinder: async () => {},
     revealVault: async () => {},
     openInDefaultApp: async () => {},
+    openExternal: async (url) => {
+      if (!/^(https?:|mailto:)/i.test(url)) return;
+      window.open(url, '_blank', 'noopener');
+    },
+    installSampleVault: async () => '/mock/sample-vault',
     saveAttachment: async (name, bytes, near) => {
       const folder = folders.has('attachments') ? 'attachments' : near ? parentOf(near) : '';
       let path = folder ? `${folder}/${name}` : name;

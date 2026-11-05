@@ -48,8 +48,7 @@ export function Welcome({ busy }: { busy: boolean }) {
 
   const openSample = async () => {
     try {
-      const { invoke } = await import('@tauri-apps/api/core');
-      const path = await invoke<string>('install_sample_vault');
+      const path = await api.installSampleVault();
       await open(path);
     } catch (e) {
       useVault.setState({ error: String(e) });

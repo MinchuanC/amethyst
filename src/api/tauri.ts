@@ -64,6 +64,11 @@ export function createTauriBackend(): Backend {
     revealInFinder: (path) => invoke('reveal_in_finder', { path }),
     revealVault: () => invoke('reveal_vault'),
     openInDefaultApp: (path) => invoke('open_in_default_app', { path }),
+    openExternal: (url) => {
+      if (!/^(https?:|mailto:)/i.test(url)) return Promise.resolve();
+      return invoke('open_external', { url });
+    },
+    installSampleVault: () => invoke<string>('install_sample_vault'),
     saveAttachment: (name, bytes, near) => invoke<string>('save_attachment', { name, data: toBase64(bytes), near: near ?? null }),
     quitApp: () => invoke('quit_app'),
     assetUrl: (path) => convertFileSrc(`${root}/${path}`),
