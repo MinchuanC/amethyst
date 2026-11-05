@@ -157,6 +157,10 @@ export interface Backend {
   revealInFinder(path: string): Promise<void>;
   revealVault(): Promise<void>;
   openInDefaultApp(path: string): Promise<void>;
+  /** Opens an http(s) or mailto URL outside the app. Other schemes are ignored. */
+  openExternal(url: string): Promise<void>;
+  /** Installs the bundled sample vault and returns its path. */
+  installSampleVault(): Promise<string>;
   /** Saves file bytes into the vault (attachments folder or beside `near`); returns the new path. */
   saveAttachment(name: string, bytes: Uint8Array, near?: string): Promise<string>;
   quitApp(): Promise<void>;

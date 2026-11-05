@@ -199,12 +199,7 @@ export function noteFolder(path: string | null) {
 }
 
 export function openExternal(url: string) {
-  if (!/^(https?:|mailto:)/i.test(url)) return;
-  if (api.isNative) {
-    import('@tauri-apps/api/core').then(({ invoke }) => invoke('open_external', { url })).catch(report);
-  } else {
-    window.open(url, '_blank', 'noopener');
-  }
+  void api.openExternal(url).catch(report);
 }
 
 export { report as reportError };

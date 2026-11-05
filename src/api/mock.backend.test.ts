@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { createMockBackend } from './mock';
 import { UNRESOLVED_PREFIX } from './types';
 
@@ -85,6 +85,19 @@ describe('mock vault backend', () => {
     expect(similar[0].path).not.toBe('Astronomy/Dark Matter.md');
     const ghosts = await api.ghostLinks(0.01);
     expect(ghosts.every((g) => g.source !== g.target)).toBe(true);
+  });
+
+  it('opens only http(s) and mailto URLs and returns the mock sample vault', async () => {
+    const open = vi.spyOn(window, 'open').mockReturnValue(null);
+    await api.openExternal('javascript:alert(1)');
+    await api.openExternal('/local');
+    expect(open).not.toHaveBeenCalled();
+    await api.openExternal('mailto:notes@example.com');
+    expect(open).toHaveBeenCalledWith('mailto:notes@example.com', '_blank', 'noopener');
+    await api.openExternal('https://example.com');
+    expect(open).toHaveBeenCalledWith('https://example.com', '_blank', 'noopener');
+    open.mockRestore();
+    expect(await api.installSampleVault()).toBe('/mock/sample-vault');
   });
 
   it('marks dangling links as unresolved nodes', async () => {
