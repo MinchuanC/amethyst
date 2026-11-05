@@ -23,8 +23,6 @@ static SCHEME: LazyLock<Regex> =
 pub struct RawLink {
     /// Link target without `#subpath` or `|display`, e.g. `Folder/Note`.
     pub target: String,
-    pub subpath: Option<String>,
-    pub display: Option<String>,
     pub embed: bool,
     /// `[text](path.md)` style rather than `[[wikilink]]`.
     pub markdown: bool,
@@ -40,7 +38,6 @@ pub struct RawLink {
 pub struct Heading {
     pub level: u8,
     pub text: String,
-    pub offset: usize,
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -73,26 +70,25 @@ pub fn parse(text: &str) -> ParsedNote {
         | Options::ENABLE_STRIKETHROUGH
         | Options::ENABLE_TASKLISTS
         | Options::ENABLE_MATH;
-    let mut heading: Option<(u8, String, usize)> = None;
+    let mut heading: Option<(u8, String)> = None;
     for (event, range) in Parser::new_ext(body, opts).into_offset_iter() {
         let abs = (range.start + body_start, range.end + body_start);
         match event {
             Event::Start(Tag::CodeBlock(_)) => excluded.push(abs),
             Event::Code(_) | Event::InlineMath(_) | Event::DisplayMath(_) => excluded.push(abs),
             Event::Start(Tag::Heading { level, .. }) => {
-                heading = Some((level as u8, String::new(), abs.0));
+                heading = Some((level as u8, String::new()));
             }
             Event::Text(t) => {
-                if let Some((_, s, _)) = heading.as_mut() {
+                if let Some((_, s)) = heading.as_mut() {
                     s.push_str(&t);
                 }
             }
             Event::End(TagEnd::Heading(_)) => {
-                if let Some((level, s, offset)) = heading.take() {
+                if let Some((level, s)) = heading.take() {
                     out.headings.push(Heading {
                         level,
                         text: s.trim().to_string(),
-                        offset,
                     });
                 }
             }
@@ -111,14 +107,14 @@ pub fn parse(text: &str) -> ParsedNote {
         link_ranges.push((start, end));
         let inner = cap.get(2).unwrap();
         let inner_str = inner.as_str();
-        let (path_part, display) = match inner_str.find('|') {
-            Some(i) => (&inner_str[..i], Some(inner_str[i + 1..].trim().to_string())),
-            None => (inner_str, None),
+        let path_part = match inner_str.find('|') {
+            Some(i) => &inner_str[..i],
+            None => inner_str,
         };
         let path_part = path_part.trim_end_matches('\\');
-        let (target, subpath) = match path_part.find('#') {
-            Some(i) => (&path_part[..i], Some(path_part[i + 1..].trim().to_string())),
-            None => (path_part, None),
+        let target = match path_part.find('#') {
+            Some(i) => &path_part[..i],
+            None => path_part,
         };
         let trimmed = target.trim();
         if trimmed.is_empty() {
@@ -128,8 +124,6 @@ pub fn parse(text: &str) -> ParsedNote {
         let target_start = inner.start() + body_start + lead;
         out.links.push(RawLink {
             target: trimmed.to_string(),
-            subpath,
-            display,
             embed: &cap[1] == "!",
             markdown: false,
             start,
@@ -162,9 +156,9 @@ pub fn parse(text: &str) -> ParsedNote {
         if url.is_empty() || url.starts_with('#') || SCHEME.is_match(url) {
             continue;
         }
-        let (path_raw, subpath) = match url.find('#') {
-            Some(i) => (&url[..i], Some(percent_decode(&url[i + 1..]))),
-            None => (url, None),
+        let path_raw = match url.find('#') {
+            Some(i) => &url[..i],
+            None => url,
         };
         let decoded = percent_decode(path_raw);
         if decoded.trim().is_empty() {
@@ -173,8 +167,6 @@ pub fn parse(text: &str) -> ParsedNote {
         let target_start = offset + body_start;
         out.links.push(RawLink {
             target: decoded.trim().to_string(),
-            subpath,
-            display: Some(cap[2].to_string()),
             embed: &cap[1] == "!",
             markdown: true,
             start,
@@ -350,8 +342,6 @@ mod tests {
     fn wikilink_forms() {
         let p = parse("See [[Alpha]], [[Beta|the beta]], [[Gamma#Origins]] and ![[pic.png]].");
         assert_eq!(targets(&p), vec!["Alpha", "Beta", "Gamma", "pic.png"]);
-        assert_eq!(p.links[1].display.as_deref(), Some("the beta"));
-        assert_eq!(p.links[2].subpath.as_deref(), Some("Origins"));
         assert!(p.links[3].embed);
         assert!(!p.links[0].embed);
     }
@@ -453,8 +443,6 @@ mod tests {
     fn alias_and_heading_together() {
         let p = parse("[[Nebulae#Crab|the crab]]");
         assert_eq!(p.links[0].target, "Nebulae");
-        assert_eq!(p.links[0].subpath.as_deref(), Some("Crab"));
-        assert_eq!(p.links[0].display.as_deref(), Some("the crab"));
     }
 
     #[test]
