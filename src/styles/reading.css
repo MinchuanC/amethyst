@@ -120,7 +120,8 @@
   padding: 10px 16px;
   border-radius: 0 8px 8px 0;
   background: var(--hover);
-  box-shadow: inset 3px 0 0 var(--nebula); /* taste-skill-ignore: a solid 3px quote bar, not a hairline */
+  /* Solid 3px quote bar, not a hairline. */
+  box-shadow: inset 3px 0 0 var(--nebula);
   color: #ddd5f4;
 }
 .reading-body ul,
@@ -171,7 +172,8 @@
 }
 .reading-body th,
 .reading-body td {
-  border: 1px solid rgba(190, 170, 255, 0.14); /* taste-skill-ignore: real table */
+  /* Cell borders for a real table. */
+  border: 1px solid rgba(190, 170, 255, 0.14);
   padding: 6px 10px;
 }
 .reading-body th {
@@ -185,7 +187,8 @@
   padding: 12px 18px 4px;
   border-radius: 10px;
   background: var(--well);
-  box-shadow: inset 3px 0 0 var(--nebula); /* taste-skill-ignore: a solid 3px embed bar, not a hairline */
+  /* Solid 3px embed bar, not a hairline. */
+  box-shadow: inset 3px 0 0 var(--nebula);
 }
 .reading-body a.embed-title {
   display: inline-block;
@@ -213,7 +216,7 @@
   border-radius: 14px;
   background: var(--surface-raised);
   backdrop-filter: var(--surface-blur);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6); /* taste-skill-ignore: popover floats */
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
   overflow: hidden;
   animation: pop-in var(--dur-fast) var(--ease-out);
   user-select: text;

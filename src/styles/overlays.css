@@ -29,7 +29,7 @@
 .toast {
   background: var(--surface-raised);
   backdrop-filter: var(--surface-blur);
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6); /* taste-skill-ignore: floating overlays */
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
 }
 
 .palette {
