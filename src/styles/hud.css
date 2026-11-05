@@ -23,7 +23,7 @@
   font-weight: 500;
   color: #ece6ff;
   /* A neutral dark halo keeps titles legible over bright stars. */
-  text-shadow: 0 0 6px rgba(4, 3, 8, 0.95), 0 0 2px rgba(4, 3, 8, 0.95); /* taste-skill-ignore: scrim for text over the live graph */
+  text-shadow: 0 0 6px rgba(4, 3, 8, 0.95), 0 0 2px rgba(4, 3, 8, 0.95);
   will-change: transform;
 }
 .g-label[data-kind='hub'] {
@@ -36,7 +36,7 @@
   background: rgba(8, 6, 14, 0.82);
   color: #fff;
   font-weight: 600;
-  text-shadow: none; /* taste-skill-ignore: removes the halo */
+  text-shadow: none;
 }
 .g-label[data-kind='focus'] {
   font-size: var(--size-ui);
@@ -52,20 +52,21 @@
   gap: 1px;
   white-space: nowrap;
   color: var(--c);
-  text-shadow: 0 0 10px rgba(4, 3, 8, 0.95); /* taste-skill-ignore: scrim for text over the live graph */
+  /* Scrim so labels stay readable on the graph. */
+  text-shadow: 0 0 10px rgba(4, 3, 8, 0.95);
   will-change: transform;
   pointer-events: none;
 }
 /* Constellation names, set like a star atlas. */
 .g-cluster span {
-  font-family: var(--font-code); /* taste-skill-ignore: star-atlas caption */
+  font-family: var(--font-code);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.32em;
   text-transform: uppercase;
 }
 .g-cluster small {
-  font-family: var(--font-code); /* taste-skill-ignore: star-atlas caption */
+  font-family: var(--font-code);
   font-size: 10px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -131,7 +132,7 @@
 /* Monospace HUD captions: the instrument voice of graph mode. */
 .hud-caption {
   margin: 0;
-  font-family: var(--font-code); /* taste-skill-ignore: brand-requested HUD readouts */
+  font-family: var(--font-code);
   font-size: 10.5px;
   font-weight: 500;
   letter-spacing: 0.14em;
@@ -153,13 +154,13 @@
 .hud-brackets::before {
   top: 6px;
   left: 6px;
-  border-width: 1px 0 0 1px; /* taste-skill-ignore: HUD corner bracket */
+  border-width: 1px 0 0 1px;
   border-top-left-radius: 4px;
 }
 .hud-brackets::after {
   right: 6px;
   bottom: 6px;
-  border-width: 0 1px 1px 0; /* taste-skill-ignore: HUD corner bracket */
+  border-width: 0 1px 1px 0;
   border-bottom-right-radius: 4px;
 }
 
@@ -233,7 +234,7 @@
   border-radius: 12px;
   background: var(--surface-raised);
   backdrop-filter: var(--surface-blur);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5); /* taste-skill-ignore: floating popover */
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
   animation: pop-in var(--dur-fast) var(--ease-out);
 }
 .hud-toggle {
@@ -335,7 +336,7 @@
   height: 9px;
   border-radius: 50%;
   flex: none;
-  box-shadow: 0 0 8px currentColor; /* taste-skill-ignore: star colour */
+  box-shadow: 0 0 8px currentColor;
 }
 .legend-label {
   flex: 1;
@@ -384,7 +385,7 @@
   font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--ion);
-  text-shadow: 0 0 10px rgba(94, 234, 247, 0.5); /* taste-skill-ignore: HUD readout glow */
+  text-shadow: 0 0 10px rgba(94, 234, 247, 0.5);
   margin-right: 6px;
 }
 
@@ -420,7 +421,7 @@
   border-radius: 12px;
   background: var(--surface-raised);
   backdrop-filter: var(--surface-blur);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5); /* taste-skill-ignore: tooltip floats */
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5);
   pointer-events: none;
   animation: pop-in var(--dur-fast) var(--ease-out);
 }
@@ -583,8 +584,8 @@
   border-radius: 50%;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 50%, rgba(94, 234, 247, 0.08), transparent 62%), /* taste-skill-ignore: radar scope phosphor */
-    radial-gradient(circle at 50% 50%, rgba(12, 10, 22, 0.55), rgba(7, 6, 11, 0.92)); /* taste-skill-ignore: radar scope phosphor */
+    radial-gradient(circle at 50% 50%, rgba(94, 234, 247, 0.08), transparent 62%),
+    radial-gradient(circle at 50% 50%, rgba(12, 10, 22, 0.55), rgba(7, 6, 11, 0.92));
 }
 .radar-scope svg {
   position: absolute;
@@ -604,7 +605,7 @@
 .scope-sweep {
   position: absolute;
   inset: 0;
-  background: conic-gradient(from 0deg, transparent 0deg, rgba(94, 234, 247, 0.32) 38deg, transparent 52deg); /* taste-skill-ignore: radar sweep beam */
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(94, 234, 247, 0.32) 38deg, transparent 52deg);
   animation: scope-rotate 4s linear infinite;
   transform-origin: 50% 50%;
 }
@@ -612,7 +613,7 @@
   position: absolute;
   border-radius: 50%;
   translate: -50% -50%;
-  box-shadow: 0 0 8px currentColor; /* taste-skill-ignore: radar return glow */
+  box-shadow: 0 0 8px currentColor;
   animation: scope-ping 4s ease-out infinite;
 }
 .scope-core {
@@ -624,7 +625,7 @@
   border-radius: 50%;
   translate: -50% -50%;
   background: #5eeaf7;
-  box-shadow: 0 0 10px rgba(94, 234, 247, 0.85); /* taste-skill-ignore: radar origin */
+  box-shadow: 0 0 10px rgba(94, 234, 247, 0.85);
 }
 @keyframes scope-rotate {
   to {
@@ -816,7 +817,7 @@
   list-style: none;
   border-radius: 10px;
   background: var(--surface-raised);
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55); /* taste-skill-ignore: dropdown floats */
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55);
 }
 .picker-list button {
   display: flex;

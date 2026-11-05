@@ -88,7 +88,7 @@
   width: 2px;
   border-radius: 2px;
   background: var(--nebula);
-  box-shadow: 0 0 8px var(--nebula); /* taste-skill-ignore: brand glow */
+  box-shadow: 0 0 8px var(--nebula);
 }
 .tree-row.kind-folder {
   color: var(--dust);
@@ -131,7 +131,7 @@
   margin: 0 3px;
   border-radius: 50%;
   background: var(--dot, var(--dust-2));
-  box-shadow: 0 0 6px var(--dot, transparent); /* taste-skill-ignore: the note's star colour */
+  box-shadow: 0 0 6px var(--dot, transparent);
 }
 
 /* ---------- Search ---------- */
@@ -299,7 +299,7 @@
   border-radius: 10px;
   background: var(--surface-raised);
   backdrop-filter: var(--surface-blur);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55); /* taste-skill-ignore: menus float */
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
   animation: pop-in var(--dur-fast) var(--ease-out);
 }
 .context-menu button {

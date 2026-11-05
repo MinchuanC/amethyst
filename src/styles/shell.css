@@ -70,8 +70,8 @@
   width: 8px;
   height: 8px;
   transform: rotate(45deg);
-  background: linear-gradient(135deg, #fff, var(--nebula)); /* taste-skill-ignore: brand glow */
-  box-shadow: 0 0 10px rgba(157, 123, 255, 0.7); /* taste-skill-ignore: brand glow */
+  background: linear-gradient(135deg, #fff, var(--nebula));
+  box-shadow: 0 0 10px rgba(157, 123, 255, 0.7);
   border-radius: 1.5px;
   flex: none;
 }
@@ -129,8 +129,8 @@
   left: 3px;
   width: calc(50% - 3px);
   border-radius: var(--r-pill);
-  background: linear-gradient(180deg, rgba(157, 123, 255, 0.5), rgba(109, 70, 240, 0.34)); /* taste-skill-ignore: brand glow */
-  box-shadow: /* taste-skill-ignore: brand glow on the mode thumb */
+  background: linear-gradient(180deg, rgba(157, 123, 255, 0.5), rgba(109, 70, 240, 0.34));
+  box-shadow:
     inset 0 0 0 1px rgba(196, 181, 253, 0.32),
     0 0 18px rgba(157, 123, 255, 0.45);
   transition:
@@ -140,8 +140,8 @@
 }
 .mode-switch[data-mode='graph'] .mode-thumb {
   transform: translateX(100%);
-  background: linear-gradient(180deg, rgba(94, 234, 247, 0.42), rgba(157, 123, 255, 0.28)); /* taste-skill-ignore: brand glow */
-  box-shadow: /* taste-skill-ignore: brand glow on the mode thumb */
+  background: linear-gradient(180deg, rgba(94, 234, 247, 0.42), rgba(157, 123, 255, 0.28));
+  box-shadow:
     inset 0 0 0 1px rgba(94, 234, 247, 0.34),
     0 0 20px rgba(94, 234, 247, 0.42);
 }
@@ -275,8 +275,10 @@
   backdrop-filter: var(--surface-blur);
   -webkit-backdrop-filter: var(--surface-blur);
   border-radius: var(--r-panel);
-  border: 1px solid rgba(190, 170, 255, 0.08); /* taste-skill-ignore: glass edge, part of the brand */
-  box-shadow: /* taste-skill-ignore: panels float over the live graph */
+  /* Glass edge on the frosted panel. */
+  border: 1px solid rgba(190, 170, 255, 0.08);
+  /* Panels float over the live graph. */
+  box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     0 24px 60px rgba(0, 0, 0, 0.35);
   overflow: hidden;
@@ -334,10 +336,10 @@
   opacity: 0.55;
 }
 .button-primary {
-  background: linear-gradient(180deg, #b39bff, #8b66ff); /* taste-skill-ignore: brand glow */
+  background: linear-gradient(180deg, #b39bff, #8b66ff);
   color: #0b0716;
   font-weight: 600;
-  box-shadow: 0 0 22px rgba(157, 123, 255, 0.35); /* taste-skill-ignore: brand glow */
+  box-shadow: 0 0 22px rgba(157, 123, 255, 0.35);
   transition:
     box-shadow var(--dur-fast),
     transform var(--dur-fast),
@@ -345,7 +347,7 @@
 }
 .button-primary:hover:not(:disabled) {
   filter: brightness(1.08);
-  box-shadow: 0 0 32px rgba(157, 123, 255, 0.55); /* taste-skill-ignore: brand glow */
+  box-shadow: 0 0 32px rgba(157, 123, 255, 0.55);
 }
 .button-danger {
   background: var(--danger);

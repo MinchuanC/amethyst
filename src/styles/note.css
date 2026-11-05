@@ -52,7 +52,7 @@
   height: 2px;
   border-radius: 2px;
   background: var(--nebula);
-  box-shadow: 0 0 10px var(--nebula); /* taste-skill-ignore: brand glow */
+  box-shadow: 0 0 10px var(--nebula);
 }
 .tab.is-dragging {
   opacity: 0.5;
@@ -133,7 +133,7 @@
   line-height: 1.15;
   color: #faf8ff;
   border-radius: 4px;
-  text-shadow: 0 0 28px rgba(157, 123, 255, 0.28); /* taste-skill-ignore: brand glow */
+  text-shadow: 0 0 28px rgba(157, 123, 255, 0.28);
 }
 .note-title:focus-visible {
   outline: 2px solid var(--ion);

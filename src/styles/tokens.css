@@ -25,7 +25,7 @@
 
   /* Type: one family for the interface, its mono sibling for code and graph readouts */
   --font-ui: 'IBM Plex Sans Variable', -apple-system, system-ui, sans-serif;
-  --font-code: 'IBM Plex Mono', ui-monospace, monospace; /* taste-skill-ignore: code blocks and the graph readout only */
+  --font-code: 'IBM Plex Mono', ui-monospace, monospace; /* Code blocks and the graph readout only. */
 
   --size-sm: 12px;
   --size-ui: 13.5px;
