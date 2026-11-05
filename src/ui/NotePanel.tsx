@@ -5,6 +5,7 @@ import { api } from '../api';
 import { bus } from '../bus';
 import { Editor } from '../editor/Editor';
 import { ReadingView } from '../editor/ReadingView';
+import { IMAGE_RE } from '../editor/wikilinks';
 import { NOTE_DRAG_TYPE } from '../dnd';
 import { useEditorStats } from '../state/editorStats';
 import { useGraphInfo } from '../state/graphInfo';
@@ -100,8 +101,6 @@ export function NotePanel() {
     </section>
   );
 }
-
-const IMAGE_RE = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
 
 function formatBytes(n: number) {
   if (n < 1024) return `${n} bytes`;

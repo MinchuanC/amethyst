@@ -22,15 +22,12 @@ export function linkTarget(inner: string) {
   return inner.split('|')[0].replace(/\\$/, '').split('#')[0].trim();
 }
 
-export interface WikilinkOptions {
-  onFollow: (target: string, newTab: boolean) => void;
-  isResolved: (target: string) => boolean;
-  /** In live preview, a plain click on a rendered link follows it. */
-  plainClickFollows: (view: EditorView, pos: number) => boolean;
-}
+/** Image file extensions rendered as embeds instead of notes. */
+export const IMAGE_RE = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
 
-function frontmatterEnd(view: EditorView) {
-  const doc = view.state.doc;
+/** End offset of a leading `---` … `---` or `...` block, or 0 when there is none. Stops after 200 lines. */
+export function frontmatterEnd(state: EditorState) {
+  const doc = state.doc;
   if (doc.lines < 2 || doc.line(1).text !== '---') return 0;
   for (let i = 2; i <= Math.min(doc.lines, 200); i++) {
     const text = doc.line(i).text;
@@ -39,9 +36,16 @@ function frontmatterEnd(view: EditorView) {
   return 0;
 }
 
+export interface WikilinkOptions {
+  onFollow: (target: string, newTab: boolean) => void;
+  isResolved: (target: string) => boolean;
+  /** In live preview, a plain click on a rendered link follows it. */
+  plainClickFollows: (view: EditorView, pos: number) => boolean;
+}
+
 function build(view: EditorView, opts: WikilinkOptions): DecorationSet {
   const builder = new RangeSetBuilder<Decoration>();
-  const fmEnd = frontmatterEnd(view);
+  const fmEnd = frontmatterEnd(view.state);
   const marks: { from: number; to: number; deco: Decoration }[] = [];
   if (fmEnd > 0) {
     const doc = view.state.doc;

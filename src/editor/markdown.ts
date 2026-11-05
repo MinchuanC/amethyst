@@ -3,7 +3,7 @@ import katex from 'katex';
 import 'katex/dist/katex.min.css';
 import MarkdownIt from 'markdown-it';
 import footnote from 'markdown-it-footnote';
-import { linkTarget } from './wikilinks';
+import { IMAGE_RE, linkTarget } from './wikilinks';
 
 export interface RenderContext {
   resolve: (target: string) => string | null;
@@ -11,8 +11,6 @@ export interface RenderContext {
   /** Already-rendered HTML for an embedded note, keyed by the embed's inner text. */
   embed?: (inner: string) => string | null;
 }
-
-const IMAGE_RE = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
