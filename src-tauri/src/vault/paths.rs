@@ -22,17 +22,86 @@ pub fn normalize_rel(rel: &str) -> AppResult<String> {
 }
 
 /// Joins a vault-relative path onto the vault root, refusing anything that
-/// would land outside it (including through symlinks of existing paths).
+/// would land outside it. Symlinks are followed, including dangling ones, and
+/// the real directory a new file would be created in has to stay inside.
 pub fn resolve_in_vault(root: &Path, rel: &str) -> AppResult<PathBuf> {
     let rel = normalize_rel(rel)?;
     let full = root.join(&rel);
-    if let Ok(canon) = full.canonicalize() {
-        let root_canon = root.canonicalize()?;
-        if !canon.starts_with(&root_canon) {
-            return Err(AppError::InvalidPath(rel));
-        }
+    let root_canon = root.canonicalize()?;
+    let anchor = anchor_of(&full, &rel)?;
+    if !anchor.starts_with(&root_canon) {
+        return Err(AppError::InvalidPath(rel));
     }
     Ok(full)
+}
+
+const MAX_SYMLINK_HOPS: u32 = 16;
+
+/// Where `full` would actually land: the canonical nearest real ancestor,
+/// plus any not-yet-created suffix. Dangling symlinks are resolved lexically
+/// so `open(O_CREAT)` cannot follow them out of the vault.
+fn anchor_of(full: &Path, rel: &str) -> AppResult<PathBuf> {
+    let invalid = || AppError::InvalidPath(rel.to_string());
+    let mut current = full.to_path_buf();
+    for _ in 0..MAX_SYMLINK_HOPS {
+        let entry = nearest_dir_entry(&current, rel)?;
+        let meta = entry.symlink_metadata()?;
+        let suffix = current
+            .strip_prefix(&entry)
+            .map_err(|_| invalid())?
+            .to_path_buf();
+        if meta.file_type().is_symlink() {
+            if let Ok(canon) = entry.canonicalize() {
+                return Ok(lexical_normalize(&canon.join(suffix)));
+            }
+            let target = entry.read_link()?;
+            let parent = entry.parent().ok_or_else(invalid)?;
+            let combined = if target.is_absolute() {
+                target.join(suffix)
+            } else {
+                parent.join(target).join(suffix)
+            };
+            let next = lexical_normalize(&combined);
+            if next == current {
+                return Err(invalid());
+            }
+            current = next;
+            continue;
+        }
+        let canon = entry.canonicalize()?;
+        return Ok(lexical_normalize(&canon.join(suffix)));
+    }
+    Err(invalid())
+}
+
+/// Deepest path entry that exists, counting dangling symlinks.
+fn nearest_dir_entry(path: &Path, rel: &str) -> AppResult<PathBuf> {
+    let mut current = path.to_path_buf();
+    loop {
+        match current.symlink_metadata() {
+            Ok(_) => return Ok(current),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+                if !current.pop() {
+                    return Err(AppError::InvalidPath(rel.to_string()));
+                }
+            }
+            Err(e) => return Err(e.into()),
+        }
+    }
+}
+
+fn lexical_normalize(path: &Path) -> PathBuf {
+    let mut out = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                out.pop();
+            }
+            component => out.push(component),
+        }
+    }
+    out
 }
 
 pub fn to_rel(root: &Path, full: &Path) -> Option<String> {
@@ -202,5 +271,74 @@ mod tests {
         assert_eq!(percent_decode("My%20Note.md"), "My Note.md");
         assert_eq!(percent_decode("100%"), "100%");
         assert_eq!(encode_md_path("a b (1).md"), "a%20b%20%281%29.md");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn resolve_rejects_when_existing_ancestor_is_outside() {
+        use std::fs;
+        use std::os::unix::fs::symlink;
+
+        let root_dir = tempfile::tempdir().unwrap();
+        let root = root_dir.path();
+        let outside = tempfile::tempdir().unwrap();
+        fs::create_dir(root.join("sub")).unwrap();
+        symlink(outside.path(), root.join("out")).unwrap();
+        symlink(outside.path(), root.join("sub/gone")).unwrap();
+        symlink(root.join("sub"), root.join("inside")).unwrap();
+        fs::write(outside.path().join("secret.md"), "nope").unwrap();
+        symlink(outside.path().join("secret.md"), root.join("secret.md")).unwrap();
+        symlink(outside.path().join("dangling.md"), root.join("dangling.md")).unwrap();
+        symlink("../outside-rel.md", root.join("rel.md")).unwrap();
+        symlink(outside.path().join("nested.md"), root.join("sub/nested.md")).unwrap();
+        symlink("dangling.md", root.join("hop.md")).unwrap();
+        fs::create_dir(root.join("notes")).unwrap();
+        symlink("notes/fresh.md", root.join("alias.md")).unwrap();
+
+        assert!(matches!(
+            resolve_in_vault(root, "out/note.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(matches!(
+            resolve_in_vault(root, "sub/gone/note.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(matches!(
+            resolve_in_vault(root, "secret.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(matches!(
+            resolve_in_vault(root, "dangling.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(matches!(
+            resolve_in_vault(root, "rel.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(matches!(
+            resolve_in_vault(root, "sub/nested.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(matches!(
+            resolve_in_vault(root, "hop.md"),
+            Err(AppError::InvalidPath(_))
+        ));
+        assert!(resolve_in_vault(root, "../etc/passwd").is_err());
+        assert_eq!(
+            resolve_in_vault(root, "alias.md").unwrap(),
+            root.join("alias.md")
+        );
+        assert_eq!(
+            resolve_in_vault(root, "brand-new/note.md").unwrap(),
+            root.join("brand-new/note.md")
+        );
+        assert_eq!(
+            resolve_in_vault(root, "sub/deep/note.md").unwrap(),
+            root.join("sub/deep/note.md")
+        );
+        assert_eq!(
+            resolve_in_vault(root, "inside/note.md").unwrap(),
+            root.join("inside/note.md")
+        );
     }
 }

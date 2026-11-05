@@ -192,12 +192,49 @@ fn folder_rename_and_delete() {
 
 #[test]
 fn rejects_paths_outside_the_vault() {
-    let (_d, mut vault) = temp_vault();
+    let (dir, mut vault) = temp_vault();
     assert!(vault.read_note("../secrets.md").is_err());
     assert!(vault.write_note("../escape.md", "x").is_err());
     assert!(vault.read_app_file("../x").is_err());
     vault.write_app_file("layout", "{}").unwrap();
     assert_eq!(vault.read_app_file("layout").unwrap().as_deref(), Some("{}"));
+
+    // A new file under a directory symlink only exists after create, so the
+    // check has to use the nearest existing ancestor (the symlink itself).
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::symlink;
+
+        let outside = tempfile::tempdir().unwrap();
+        symlink(outside.path(), dir.path().join("escape-link")).unwrap();
+        assert!(vault.write_note("escape-link/pwn.md", "x").is_err());
+        assert!(vault.create_folder("escape-link/nested").is_err());
+        assert!(outside.path().read_dir().unwrap().next().is_none());
+
+        symlink(outside.path().join("dangling.md"), dir.path().join("dangling.md")).unwrap();
+        assert!(vault.write_note("dangling.md", "x").is_err());
+        assert!(!outside.path().join("dangling.md").exists());
+
+        symlink(outside.path().join("nested.md"), dir.path().join("Thinking/escape-nested.md")).unwrap();
+        assert!(vault.write_note("Thinking/escape-nested.md", "x").is_err());
+        assert!(!outside.path().join("nested.md").exists());
+
+        let rel_name = format!("pwn-{}.md", std::process::id());
+        symlink(format!("../{rel_name}"), dir.path().join("escape-rel.md")).unwrap();
+        assert!(vault.write_note("escape-rel.md", "x").is_err());
+        let escaped = dir.path().parent().unwrap().join(&rel_name);
+        let created = escaped.exists();
+        let _ = fs::remove_file(&escaped);
+        assert!(!created);
+
+        symlink(dir.path().join("Thinking"), dir.path().join("inside-link")).unwrap();
+        vault.write_note("inside-link/via-link.md", "kept").unwrap();
+        assert_eq!(fs::read_to_string(dir.path().join("Thinking/via-link.md")).unwrap(), "kept");
+
+        symlink("Thinking/from-alias.md", dir.path().join("alias-inside.md")).unwrap();
+        vault.write_note("alias-inside.md", "inside").unwrap();
+        assert_eq!(fs::read_to_string(dir.path().join("Thinking/from-alias.md")).unwrap(), "inside");
+    }
 }
 
 #[test]
